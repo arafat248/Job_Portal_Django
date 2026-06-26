@@ -9,6 +9,7 @@ def user_is_employer(function):
         raise PermissionDenied
     return wrap
 
+
 def user_is_employee(function):
     def wrap(request, *args, **kwargs):
         if request.user.role == 'employee':
@@ -17,11 +18,15 @@ def user_is_employee(function):
     return wrap
 
 class EmployerRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    """Allows access only to authenticated employers."""
     login_url = reverse_lazy('account:login')
+
     def test_func(self):
         return self.request.user.role == 'employer'
 
 class EmployeeRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    """Allows access only to authenticated employees."""
     login_url = reverse_lazy('account:login')
+
     def test_func(self):
         return self.request.user.role == 'employee'
