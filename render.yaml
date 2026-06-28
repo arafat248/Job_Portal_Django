@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: job-portal-django
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: "*"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: job-portal-db
+          property: connectionString
+
+      - key: DB_HOST
+        fromDatabase:
+          name: job-portal-db
+          property: host
+      - key: DB_NAME
+        fromDatabase:
+          name: job-portal-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: job-portal-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: job-portal-db
+          property: password
+      - key: DB_PORT
+        fromDatabase:
+          name: job-portal-db
+          property: port
+
+databases:
+  - name: job-portal-db
+    plan: free
