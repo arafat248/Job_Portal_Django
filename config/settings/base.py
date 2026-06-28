@@ -148,11 +148,28 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
-STORAGES = {
-    "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-    },
-}
+# On Render (build) you might not have valid Cloudinary signature/API keys yet.
+# So by default we keep STATICFILES local to avoid build failures.
+# Set USE_CLOUDINARY_STATIC=true in Render to upload static files to Cloudinary.
+USE_CLOUDINARY_STATIC = env.bool('USE_CLOUDINARY_STATIC', default=False)
+
+
+if USE_CLOUDINARY_STATIC:
+    STATICFILES_STORAGE = "cloudinary_storage.storage.StaticCloudinaryStorage"
+    STORAGES = {
+        "staticfiles": {
+            "BACKEND": "cloudinary_storage.storage.StaticCloudinaryStorage",
+        },
+    }
+else:
+    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+    STORAGES = {
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
+
+
 
 SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=False)
 SESSION_COOKIE_SECURE = env.bool('SESSION_COOKIE_SECURE', default=False)
