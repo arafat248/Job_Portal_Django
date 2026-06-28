@@ -12,9 +12,10 @@ from django.views.generic import (
     View,
 )
 from jobapp.forms import JobEditForm, JobForm
-from jobapp.models import Applicant, Category, Job
+from jobapp.models import Applicant, Job
 from jobapp.permission import EmployerRequiredMixin
 from jobapp.services import toggle_job_status
+
 User = get_user_model()
 
 
@@ -23,11 +24,6 @@ class CreateJobView(EmployerRequiredMixin, CreateView):
     model = Job
     form_class = JobForm
     template_name = 'jobapp/post-job.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
-        return context
 
     def form_valid(self, form):
         instance = form.save(commit=False)
@@ -47,11 +43,6 @@ class JobEditView(EmployerRequiredMixin, UpdateView):
 
     def get_queryset(self):
         return Job.objects.filter(user=self.request.user)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
-        return context
 
     def form_valid(self, form):
         instance = form.save()
@@ -77,6 +68,7 @@ class DeleteJobView(EmployerRequiredMixin, DeleteView):
 
 class MakeCompleteJobView(EmployerRequiredMixin, View):
     """Employer marks a job as closed. (Custom action — kept as View subclass)"""
+
     def post(self, request, id):
         try:
             toggle_job_status(request.user.id, id)
@@ -109,13 +101,14 @@ class ApplicantDetailsView(EmployerRequiredMixin, DetailView):
 
 class UpdateApplicantStatusView(EmployerRequiredMixin, View):
     """Employer updates the status of an application (Accepted/Rejected)."""
+
     def post(self, request, id):
         applicant = get_object_or_404(Applicant, id=id)
         # Ensure the employer owns the job
         if applicant.job.user != request.user:
             messages.error(request, 'You are not authorized to perform this action.')
             return redirect('jobapp:dashboard')
-        
+
         status = request.POST.get('status')
         if status in ['accepted', 'rejected']:
             applicant.status = status
@@ -123,5 +116,6 @@ class UpdateApplicantStatusView(EmployerRequiredMixin, View):
             messages.success(request, f'Applicant has been {status}!')
         else:
             messages.error(request, 'Invalid status.')
-            
+
         return redirect('jobapp:applicants', id=applicant.job.id)
+

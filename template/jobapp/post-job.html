@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
 
 <!-- HOME -->
@@ -19,7 +20,6 @@
   </div>
 </section>
 
-
 <section class="site-section">
   <div class="container">
 
@@ -33,17 +33,18 @@
       </div>
       <div class="col-lg-4">
         <div class="row">
-
           <div class="col-6">
             <a href="#" class="btn btn-block btn-primary btn-md">Save Job</a>
           </div>
         </div>
       </div>
     </div>
+
     <form method="POST" enctype="multipart/form-data">
       <div class="row mb-5 p-4 p-md-5 border rounded">
         <div class="col-lg-12">
           <h3 class="text-black mb-5 border-bottom pb-2">Job Details</h3>
+
           {% if form.errors %}
           {% for field in form %}
           {% for error in field.errors %}
@@ -54,88 +55,79 @@
           {% endfor %}
           {% endfor %}
           {% endif %}
+
           {% csrf_token %}
+
           {% for field in form %}
-          {% if field.name == 'job_type' %}
-          <div class="form-group">
-            <label for="job-type">Job Type</label>
-            <select name="job_type" class="selectpicker border rounded" id="job-type" data-style="btn-black"
-              data-width="100%" data-live-search="true" title="Select Job Type">
-              <option value="1">Full time</option>
-              <option value="2">Part time</option>
-              <option value="3">Internship</option>
-            </select>
-          </div>
-          {% elif field.name == 'work_mode' %}
-          <div class="form-group">
-            <label for="work-mode">Work Mode</label>
-            <select name="work_mode" class="selectpicker border rounded" id="work-mode" data-style="btn-black"
-              data-width="100%" data-live-search="true" title="Select Work Mode">
-              <option value="1">Remote</option>
-              <option value="2">Hybrid</option>
-              <option value="3">On-site</option>
-            </select>
-          </div>
+            {% if field.name == 'job_type' %}
+              <div class="form-group">
+                <label for="job-type">Job Type</label>
+                <select name="job_type" class="selectpicker border rounded" id="job-type" data-style="btn-black"
+                  data-width="100%" data-live-search="true" title="Select Job Type">
+                  <option value="1">Full time</option>
+                  <option value="2">Part time</option>
+                  <option value="3">Internship</option>
+                </select>
+              </div>
+            {% elif field.name == 'work_mode' %}
+              <div class="form-group">
+                <label for="work-mode">Work Mode</label>
+                <select name="work_mode" class="selectpicker border rounded" id="work-mode" data-style="btn-black"
+                  data-width="100%" data-live-search="true" title="Select Work Mode">
+                  <option value="1">Remote</option>
+                  <option value="2">Hybrid</option>
+                  <option value="3">On-site</option>
+                </select>
+              </div>
 
-          {% elif field.name == 'experience_level' %}
-          <div class="form-group">
-            <label for="experience-level">Experience Level</label>
-            <select name="experience_level" class="selectpicker border rounded" id="experience-level"
-              data-style="btn-black" data-width="100%" data-live-search="true" title="Select Experience Level">
-              <option value="0">Entry Level</option>
-              <option value="1">Mid Level</option>
-              <option value="2">Senior Level</option>
-              <option value="3">Lead / Manager</option>
-            </select>
-          </div>
-          {% elif field.name == 'category' %}
-          <div class="form-group">
-            <label for="job-type">Category</label>
-            <select name="category" class="selectpicker border rounded" id="job-type" data-style="btn-black"
-              data-width="100%" data-live-search="true" title="Select Job Type">
+            {% elif field.name == 'experience_level' %}
+              <div class="form-group">
+                <label for="experience-level">Experience Level</label>
+                <select name="experience_level" class="selectpicker border rounded" id="experience-level"
+                  data-style="btn-black" data-width="100%" data-live-search="true" title="Select Experience Level">
+                  <option value="0">Entry Level</option>
+                  <option value="1">Mid Level</option>
+                  <option value="2">Senior Level</option>
+                  <option value="3">Lead / Manager</option>
+                </select>
+              </div>
 
-              {% for category in categories %}
+            {% elif field.name == 'description' %}
+              <div class="form-group">
+                <label for="job-type">Description</label>
+                <div>
+                  {{ form.media }}
+                  {{ form.description }}
+                </div>
+              </div>
 
-              <option value="{{ category.id }}">{{ category.name }}</option>
+            {% elif field.name == 'last_date' %}
+              <div class="form-group">
+                <label class="text-black" for="id_{{ field.name }}">{{ field.label }}</label>
+                <input type="text" class="form-control appointment_date" placeholder="Select Date" name="{{ field.name }}"
+                  id="id_{{ field.name }}" required="true">
+              </div>
 
-              {% endfor %}
-            </select>
-          </div>
+            {% elif field.name == 'company_description' %}
+              <div class="form-group">
+                <label for="job-type">Company Description</label>
+                <div>
+                  {{ form.media }}
+                  {{ form.company_description }}
+                </div>
+              </div>
 
-          {% elif field.name == 'description' %}
-          <div class="form-group">
-            <label for="job-type">Description</label>
-            <div class="">
-              {{ form.media }}
-              {{ form.description }}
-            </div>
-          </div>
-          {% elif field.name == 'last_date' %}
-          <div class="form-group">
-            <label class="text-black" for="id_{{ field.name }}">{{ field.label }}</label>
-            <input type="text" class="form-control appointment_date" placeholder="Select Date" name="{{ field.name }}"
-              id='id="id_{{ field.name }}"' required="true">
+            {% else %}
+              {% if field.name == 'company_name'%}
+                <h3 class="text-black mt-5 mb-5 border-bottom pb-2">Company Details</h3>
+              {% endif%}
 
-          </div>
-          {% elif field.name == 'company_description' %}
-          <div class="form-group">
-            <label for="job-type">Company Description</label>
-            <div class="">
-
-              {{ form.media }}
-              {{ form.company_description }}
-            </div>
-          </div>
-          {% else %}
-          {% if field.name == 'company_name'%}
-          <h3 class="text-black mt-5 mb-5 border-bottom pb-2">Company Details</h3>
-          {% endif%}
-          <div class="form-group">
-            <label class="text-black" for="id_{{ field.name }}">{{ field.label }}</label>
-            <input type="{{ field.field.widget.input_type }}" class="form-control" name="{{ field.name }}"
-              id="id_{{ field.name }}" placeholder="{{ field.field.widget.attrs.placeholder }}">
-          </div>
-          {% endif %}
+              <div class="form-group">
+                <label class="text-black" for="id_{{ field.name }}">{{ field.label }}</label>
+                <input type="{{ field.field.widget.input_type }}" class="form-control" name="{{ field.name }}"
+                  id="id_{{ field.name }}" placeholder="{{ field.field.widget.attrs.placeholder }}">
+              </div>
+            {% endif %}
           {% endfor %}
         </div>
       </div>
@@ -144,14 +136,15 @@
         <div class="col-lg-4 ml-auto">
           <div class="row">
             <div class="col-6">
-
               <input class="btn btn-block btn-primary btn-md" type="submit" value="Submit">
             </div>
           </div>
         </div>
-    </form>
+      </div>
 
-  </div>
+    </form>
   </div>
 </section>
+
 {% endblock %}
+

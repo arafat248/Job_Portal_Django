@@ -1,9 +1,6 @@
 from django.contrib import admin
 from .models import *
 
-
-admin.site.register(Category)
-
 class ApplicantAdmin(admin.ModelAdmin):
     list_display = ('job', 'user', 'status', 'created_at', 'is_deleted')
     list_filter = ('status', 'is_deleted')
